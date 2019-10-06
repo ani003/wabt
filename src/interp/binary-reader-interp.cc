@@ -1904,7 +1904,8 @@ wabt::Result ReadBinaryInterp(Environment* env,
                               size_t size,
                               const ReadBinaryOptions& options,
                               Errors* errors,
-                              DefinedModule** out_module) {
+                              Module** out_module,
+                              DefinedModule** out_module_instance) {
   // Need to mark before taking ownership of env->istream.
   Environment::MarkPoint mark = env->Mark();
 
@@ -1920,21 +1921,23 @@ wabt::Result ReadBinaryInterp(Environment* env,
   env->SetIstream(reader.ReleaseOutputBuffer());
 
   if (Succeeded(result)) {
-    module->istream_start = istream_offset;
-    module->istream_end = env->istream().size();
+    Module* mod = new Module();
+    mod->istream_start = istream_offset;
+    mod->istream_end = env->istream().size();
+    *out_module = mod;
 
     result = reader.InitializeSegments();
     if (Succeeded(result)) {
-      *out_module = module;
+      *out_module_instance = module;
     } else {
       // We failed to initialize data and element segments, but we can't reset
       // to the mark point. An element segment may have initialized an imported
       // table with a function from this module, which is still callable.
-      *out_module = nullptr;
+      *out_module_instance = nullptr;
     }
   } else {
     env->ResetToMarkPoint(mark);
-    *out_module = nullptr;
+    *out_module_instance = nullptr;
   }
 
   return result;

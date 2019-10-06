@@ -24,6 +24,7 @@ namespace wabt {
 
 namespace interp {
 
+struct Module;
 struct DefinedModule;
 class Environment;
 
@@ -36,7 +37,8 @@ Result ReadBinaryInterp(interp::Environment* env,
                         size_t size,
                         const ReadBinaryOptions& options,
                         Errors*,
-                        interp::DefinedModule** out_module);
+                        interp::Module** out_module,
+                        interp::DefinedModule** out_module_instance);
 
 }  // namespace wabt
 

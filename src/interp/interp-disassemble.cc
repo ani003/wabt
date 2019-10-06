@@ -636,11 +636,9 @@ void Environment::Disassemble(Stream* stream,
   }
 }
 
-void Environment::DisassembleModule(Stream* stream, ModuleInstance* module) {
-  assert(!module->is_host);
-  auto* defined_module = cast<DefinedModule>(module);
-  Disassemble(stream, defined_module->istream_start,
-              defined_module->istream_end);
+void Environment::DisassembleModule(Stream* stream, Module* module) {
+  Disassemble(stream, module->istream_start,
+              module->istream_end);
 }
 
 }  // namespace interp
