@@ -137,12 +137,11 @@ static void RunAllExports(ModuleInstance* module,
 static wabt::Result ReadModule(const char* module_filename,
                                Environment* env,
                                Errors* errors,
-                               DefinedModule** out_module_instance) {
+                               DefinedModule** out_module) {
   wabt::Result result;
   std::vector<uint8_t> file_data;
 
-  *out_module_instance = nullptr;
-  interp::Module* out_module;
+  *out_module = nullptr;
 
   result = ReadFile(module_filename, &file_data);
   if (Succeeded(result)) {
@@ -152,11 +151,11 @@ static wabt::Result ReadModule(const char* module_filename,
     ReadBinaryOptions options(s_features, s_log_stream.get(), kReadDebugNames,
                               kStopOnFirstError, kFailOnCustomSectionError);
     result = ReadBinaryInterp(env, file_data.data(), file_data.size(), options,
-                              errors, &out_module, out_module_instance);
+                              errors, out_module);
 
     if (Succeeded(result)) {
       if (s_verbose) {
-        env->DisassembleModule(s_stdout_stream.get(), out_module);
+        env->DisassembleModule(s_stdout_stream.get(), *out_module);
       }
     }
   }

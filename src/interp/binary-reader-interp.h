@@ -24,20 +24,40 @@ namespace wabt {
 
 namespace interp {
 
-struct Module;
+struct Export;
 struct DefinedModule;
+struct Module;
+struct ModuleMetadata;
 class Environment;
 
 }  // namespace interp
 
 struct ReadBinaryOptions;
 
+// Reads just the binary metadata, used by C-API to get module imports names
+// (and potentially other metadata) before instantiation time.
+Result ReadBinaryMetadata(const void* data,
+                          size_t size,
+                          const ReadBinaryOptions& options,
+                          Errors*,
+                          interp::ModuleMetadata** out_metadata);
+
+// Read and instantiate a module in the given environment.
 Result ReadBinaryInterp(interp::Environment* env,
                         const void* data,
                         size_t size,
                         const ReadBinaryOptions& options,
                         Errors*,
-                        interp::Module** out_module,
+                        interp::DefinedModule** out_module_instance);
+
+// Read and instantiate a module in the given environment. Similar to above but
+// using using fixed set of exports to resolve the module exports.
+Result ReadBinaryInterp(interp::Environment* env,
+                        const void* data,
+                        size_t size,
+                        const ReadBinaryOptions& options,
+                        const std::vector<interp::Export*>& imports,
+                        Errors*,
                         interp::DefinedModule** out_module_instance);
 
 }  // namespace wabt

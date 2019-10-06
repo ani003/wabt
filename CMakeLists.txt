@@ -223,7 +223,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${WABT_SOURCE_DIR}/cmake)
 
 add_custom_target(everything)
 
-add_library(wabt STATIC
+set(WABT_LIBRARY_SRC
   src/apply-names.h
   src/apply-names.cc
   src/binary.h
@@ -312,6 +312,15 @@ add_library(wabt STATIC
   src/interp/interp-trace.cc
 )
 
+add_library(wabt STATIC ${WABT_LIBRARY_SRC})
+
+# libwasm, which implenents the wasm C API
+add_library(wasm SHARED ${WABT_LIBRARY_SRC} src/interp/interp-wasm-c-api.cc)
+target_link_libraries(wasm wabt)
+target_include_directories(wasm PUBLIC third_party/wasm-c-api/include)
+target_compile_options(wasm PUBLIC -Wno-old-style-cast)
+target_compile_definitions(wasm PRIVATE "WASM_API=__attribute__((visibility(\"default\")))")
+set_target_properties(wasm PROPERTIES CXX_VISIBILITY_PRESET hidden)
 
 if (NOT EMSCRIPTEN)
   if (CODE_COVERAGE)
@@ -509,6 +518,19 @@ if (NOT EMSCRIPTEN)
       ${USES_TERMINAL}
     )
     add_dependencies(run-tests wabt-unittests)
+
+    macro(c_api_example)
+      add_executable(wasm-c-api-${ARGV0} third_party/wasm-c-api/example/${ARGV0}.c)
+      target_link_libraries(wasm-c-api-${ARGV0} wasm)
+    endmacro()
+
+    c_api_example(callback)
+    c_api_example(finalize)
+    c_api_example(global)
+    c_api_example(start)
+    #c_api_example(hostref)
+    c_api_example(hello)
+    c_api_example(table)
   endif ()
 
   # install

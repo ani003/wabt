@@ -636,7 +636,7 @@ void Environment::Disassemble(Stream* stream,
   }
 }
 
-void Environment::DisassembleModule(Stream* stream, Module* module) {
+void Environment::DisassembleModule(Stream* stream, DefinedModule* module) {
   Disassemble(stream, module->istream_start,
               module->istream_end);
 }

@@ -51,16 +51,15 @@ class HostTrapTest : public ::testing::Test {
   interp::ExecResult LoadModuleAndRunStartFunction(
       const std::vector<uint8_t>& data) {
     Errors errors;
-    interp::Module* module = nullptr;
-    interp::DefinedModule* module_instance = nullptr;
+    interp::DefinedModule* module = nullptr;
     ReadBinaryOptions options;
     Result result = ReadBinaryInterp(&env_, data.data(), data.size(), options,
-                                     &errors, &module, &module_instance);
+                                     &errors, &module);
     EXPECT_EQ(Result::Ok, result);
 
     if (result == Result::Ok) {
       interp::Executor executor(&env_);
-      return executor.RunStartFunction(module_instance);
+      return executor.RunStartFunction(module);
     } else {
       return {};
     }
@@ -129,9 +128,8 @@ class HostMemoryTest : public ::testing::Test {
   Result LoadModule(const std::vector<uint8_t>& data) {
     Errors errors;
     ReadBinaryOptions options;
-    interp::Module* module;
     return ReadBinaryInterp(&env_, data.data(), data.size(), options, &errors,
-                            &module, &module_);
+                            &module_);
   }
 
   std::string string_data;
