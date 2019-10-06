@@ -636,7 +636,7 @@ void Environment::Disassemble(Stream* stream,
   }
 }
 
-void Environment::DisassembleModule(Stream* stream, Module* module) {
+void Environment::DisassembleModule(Stream* stream, ModuleInstance* module) {
   assert(!module->is_host);
   auto* defined_module = cast<DefinedModule>(module);
   Disassemble(stream, defined_module->istream_start,

@@ -138,12 +138,12 @@ Index Environment::FindModuleIndex(string_view name) const {
   return iter->second.index;
 }
 
-Module* Environment::FindModule(string_view name) {
+ModuleInstance* Environment::FindModule(string_view name) {
   Index index = FindModuleIndex(name);
   return index == kInvalidIndex ? nullptr : modules_[index].get();
 }
 
-Module* Environment::FindRegisteredModule(string_view name) {
+ModuleInstance* Environment::FindRegisteredModule(string_view name) {
   bool retry = false;
   while (true) {
     auto iter = registered_module_bindings_.find(name.to_string());
@@ -186,20 +186,20 @@ FuncSignature::FuncSignature(Index param_count,
     : param_types(param_types, param_types + param_count),
       result_types(result_types, result_types + result_count) {}
 
-Module::Module(bool is_host)
+ModuleInstance::ModuleInstance(bool is_host)
     : memory_index(kInvalidIndex),
       table_index(kInvalidIndex),
       is_host(is_host) {}
 
-Module::Module(string_view name, bool is_host)
+ModuleInstance::ModuleInstance(string_view name, bool is_host)
     : name(name.to_string()),
       memory_index(kInvalidIndex),
       table_index(kInvalidIndex),
       is_host(is_host) {}
 
-Export* Module::GetFuncExport(Environment* env,
-                              string_view name,
-                              Index sig_index) {
+Export* ModuleInstance::GetFuncExport(Environment* env,
+                                      string_view name,
+                                      Index sig_index) {
   auto range = export_bindings.equal_range(name.to_string());
   for (auto iter = range.first; iter != range.second; ++iter) {
     const Binding& binding = iter->second;
@@ -227,7 +227,7 @@ Export* Module::GetFuncExport(Environment* env,
   return nullptr;
 }
 
-Export* Module::GetExport(string_view name) {
+Export* ModuleInstance::GetExport(string_view name) {
   int field_index = export_bindings.FindIndex(name);
   if (field_index < 0) {
     return nullptr;
@@ -235,7 +235,7 @@ Export* Module::GetExport(string_view name) {
   return &exports[field_index];
 }
 
-Index Module::AppendExport(ExternalKind kind,
+Index ModuleInstance::AppendExport(ExternalKind kind,
                            Index item_index,
                            string_view name) {
   exports.emplace_back(name, kind, item_index);
@@ -245,13 +245,13 @@ Index Module::AppendExport(ExternalKind kind,
 }
 
 DefinedModule::DefinedModule()
-    : Module(false),
+    : ModuleInstance(false),
       start_func_index(kInvalidIndex),
       istream_start(kInvalidIstreamOffset),
       istream_end(kInvalidIstreamOffset) {}
 
 HostModule::HostModule(Environment* env, string_view name)
-    : Module(name, true), env_(env) {}
+    : ModuleInstance(name, true), env_(env) {}
 
 Index HostModule::OnUnknownFuncExport(string_view name, Index sig_index) {
   if (on_unknown_func_export) {
@@ -3587,7 +3587,7 @@ ExecResult Executor::RunExport(const Export* export_, const TypedValues& args) {
   return RunFunction(export_->index, args);
 }
 
-ExecResult Executor::RunExportByName(Module* module,
+ExecResult Executor::RunExportByName(ModuleInstance* module,
                                      string_view name,
                                      const TypedValues& args) {
   Export* export_ = module->GetExport(name);

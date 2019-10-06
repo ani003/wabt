@@ -321,18 +321,21 @@ class BinaryReaderInterp : public BinaryReaderNop {
                                 Address natural_alignment);
   wabt::Result CheckInFunction();
 
-  wabt::Result AppendExport(Module* module,
+  wabt::Result AppendExport(ModuleInstance* module,
                             ExternalKind kind,
                             Index item_index,
                             string_view name);
   wabt::Result FindRegisteredModule(string_view module_name,
-                                    Module** out_module);
+                                    ModuleInstance** out_module);
   wabt::Result ResolveImport(Index import_index,
                              ExternalKind kind,
                              string_view module_name,
                              string_view field_name,
                              Index sig_index,
                              Export** out_export);
+  wabt::Result GetModuleExport(ModuleInstance* module,
+                               string_view field_name,
+                               Export** out_export);
 
   Features features_;
   Errors* errors_ = nullptr;
@@ -740,7 +743,7 @@ wabt::Result BinaryReaderInterp::CheckImportLimits(
   return wabt::Result::Ok;
 }
 
-wabt::Result BinaryReaderInterp::AppendExport(Module* module,
+wabt::Result BinaryReaderInterp::AppendExport(ModuleInstance* module,
                                               ExternalKind kind,
                                               Index item_index,
                                               string_view name) {
@@ -757,8 +760,8 @@ wabt::Result BinaryReaderInterp::AppendExport(Module* module,
 }
 
 wabt::Result BinaryReaderInterp::FindRegisteredModule(string_view module_name,
-                                                      Module** out_module) {
-  Module* module = env_->FindRegisteredModule(module_name);
+                                                      ModuleInstance** out_module) {
+  ModuleInstance* module = env_->FindRegisteredModule(module_name);
   if (!module) {
     PrintError("unknown import module \"" PRIstringview "\"",
                WABT_PRINTF_STRING_VIEW_ARG(module_name));
@@ -775,7 +778,7 @@ wabt::Result BinaryReaderInterp::ResolveImport(Index import_index,
                                                string_view field_name,
                                                Index sig_index,
                                                Export** out_export) {
-  Module* module;
+  ModuleInstance* module;
   CHECK_RESULT(FindRegisteredModule(module_name, &module));
 
   Export* export_ = nullptr;

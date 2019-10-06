@@ -117,7 +117,7 @@ static void ParseOptions(int argc, char** argv) {
   parser.Parse(argc, argv);
 }
 
-static void RunAllExports(interp::Module* module,
+static void RunAllExports(ModuleInstance* module,
                           Executor* executor,
                           RunVerbosity verbose) {
   TypedValues args;

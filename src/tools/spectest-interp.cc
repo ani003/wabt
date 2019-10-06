@@ -937,7 +937,7 @@ void CommandRunner::PrintError(uint32_t line_number, const char* format, ...) {
 }
 
 static ExecResult GetGlobalExportByName(Environment* env,
-                                        interp::Module* module,
+                                        interp::ModuleInstance* module,
                                         string_view name) {
   interp::Export* export_ = module->GetExport(name);
   if (!export_) {
@@ -954,7 +954,7 @@ static ExecResult GetGlobalExportByName(Environment* env,
 ExecResult CommandRunner::RunAction(int line_number,
                                     const Action* action,
                                     RunVerbosity verbose) {
-  interp::Module* module;
+  interp::ModuleInstance* module;
   if (!action->module_name.empty()) {
     module = env_.FindModule(action->module_name);
   } else {
