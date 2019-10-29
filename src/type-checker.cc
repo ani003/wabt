@@ -703,6 +703,12 @@ Result TypeChecker::OnSetjmp() {
   return result;
 }
 
+Result TypeChecker::OnLongjmp() {
+  // printf("TypeChecker::OnSetjmp\n");
+  Result result = PopAndCheck2Types(Type::I32, Type::I64, "longjmp");
+  return result;
+}
+
 Result TypeChecker::OnStore(Opcode opcode) {
   return CheckOpcode2(opcode);
 }

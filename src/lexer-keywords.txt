@@ -32,6 +32,7 @@ br_on_exn, TokenType::BrOnExn, Opcode::BrOnExn
 br_table, TokenType::BrTable, Opcode::BrTable
 br, TokenType::Br, Opcode::Br
 setjmp, TokenType::Setjmp, Opcode::Setjmp
+longjmp, TokenType::Longjmp, Opcode::Longjmp
 call_indirect, TokenType::CallIndirect, Opcode::CallIndirect
 call, TokenType::Call, Opcode::Call
 catch, TokenType::Catch, Opcode::Catch

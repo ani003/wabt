@@ -106,6 +106,7 @@ void RemoveEscapes(const TextVector& texts, OutputIter out) {
 bool IsPlainInstr(TokenType token_type) {
   switch (token_type) {
     case TokenType::Setjmp:
+    case TokenType::Longjmp:
     case TokenType::Unreachable:
     case TokenType::Nop:
     case TokenType::Drop:
@@ -1474,6 +1475,14 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       ErrorUnlessOpcodeEnabled(token);
       // out_expr->reset(new UnaryExpr(token.opcode(), loc));
       out_expr->reset(new SetjmpExpr(loc));
+      break;
+    }
+
+    case TokenType::Longjmp: {
+      Token token = Consume();
+      ErrorUnlessOpcodeEnabled(token);
+      // out_expr->reset(new UnaryExpr(token.opcode(), loc));
+      out_expr->reset(new LongjmpExpr(loc));
       break;
     }
 

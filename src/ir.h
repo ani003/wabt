@@ -200,6 +200,7 @@ enum class ExprType {
   SimdLaneOp,
   SimdShuffleOp,
   LoadSplat,
+  Longjmp,
   Store,
   TableCopy,
   ElemDrop,
@@ -273,6 +274,7 @@ typedef ExprMixin<ExprType::Rethrow> RethrowExpr;
 typedef ExprMixin<ExprType::Return> ReturnExpr;
 typedef ExprMixin<ExprType::Select> SelectExpr;
 typedef ExprMixin<ExprType::Setjmp> SetjmpExpr;
+typedef ExprMixin<ExprType::Longjmp> LongjmpExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;
 typedef ExprMixin<ExprType::RefNull> RefNullExpr;
 typedef ExprMixin<ExprType::RefIsNull> RefIsNullExpr;
@@ -338,17 +340,6 @@ typedef VarExpr<ExprType::TableGet> TableGetExpr;
 typedef VarExpr<ExprType::TableSet> TableSetExpr;
 typedef VarExpr<ExprType::TableGrow> TableGrowExpr;
 typedef VarExpr<ExprType::TableSize> TableSizeExpr;
-
-
-// class SetjmpExpr : public ExprMixin<ExprType::Setjmp> {
-//  public:
-//   SetjmpExpr(const Location& loc = Location())
-//       : ExprMixin<ExprType::Setjmp>(loc) {}
-
-//   // Var label_var;
-//   // Var event_var;
-// };
-
 
 class CallIndirectExpr : public ExprMixin<ExprType::CallIndirect> {
  public:

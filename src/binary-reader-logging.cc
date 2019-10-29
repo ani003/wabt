@@ -740,6 +740,7 @@ DEFINE_INDEX_INDEX(OnReturnCallIndirectExpr, "sig_index", "table_index")
 DEFINE0(OnReturnExpr)
 DEFINE0(OnSelectExpr)
 DEFINE0(OnSetjmpExpr)
+DEFINE0(OnLongjmpExpr)
 DEFINE_LOAD_STORE_OPCODE(OnLoadSplatExpr);
 DEFINE_LOAD_STORE_OPCODE(OnStoreExpr);
 DEFINE_INDEX_DESC(OnThrowExpr, "event_index")

@@ -203,6 +203,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnReturnExpr() override;
   Result OnSelectExpr() override;
   Result OnSetjmpExpr() override;
+  Result OnLongjmpExpr() override;
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
                      Address offset) override;

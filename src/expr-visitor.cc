@@ -344,6 +344,11 @@ Result ExprVisitor::HandleDefaultState(Expr* expr) {
       CHECK_RESULT(delegate_->OnSetjmpExpr(cast<SetjmpExpr>(expr)));
       break;
 
+    case ExprType::Longjmp:
+      // printf("case ExprType::Setjmp\n");
+      CHECK_RESULT(delegate_->OnLongjmpExpr(cast<LongjmpExpr>(expr)));
+      break;
+
     case ExprType::Store:
       CHECK_RESULT(delegate_->OnStoreExpr(cast<StoreExpr>(expr)));
       break;

@@ -202,6 +202,7 @@ class BinaryReaderInterp : public BinaryReaderNop {
   wabt::Result OnReturnExpr() override;
   wabt::Result OnSelectExpr() override;
   wabt::Result OnSetjmpExpr() override;
+  wabt::Result OnLongjmpExpr() override;
   wabt::Result OnStoreExpr(wabt::Opcode opcode,
                            uint32_t alignment_log2,
                            Address offset) override;
@@ -1764,6 +1765,12 @@ wabt::Result BinaryReaderInterp::OnSelectExpr() {
 wabt::Result BinaryReaderInterp::OnSetjmpExpr() {
   CHECK_RESULT(typechecker_.OnSetjmp());
   CHECK_RESULT(EmitOpcode(Opcode::Setjmp));
+  return wabt::Result::Ok;
+}
+
+wabt::Result BinaryReaderInterp::OnLongjmpExpr() {
+  CHECK_RESULT(typechecker_.OnLongjmp());
+  CHECK_RESULT(EmitOpcode(Opcode::Longjmp));
   return wabt::Result::Ok;
 }
 
