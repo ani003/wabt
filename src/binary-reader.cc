@@ -621,6 +621,11 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
         CALLBACK0(OnOpcodeBare);
         break;
 
+      case Opcode::Setjmp:
+        CALLBACK0(OnSetjmpExpr);
+        CALLBACK0(OnOpcodeBare);
+        break;
+
       case Opcode::Br: {
         Index depth;
         CHECK_RESULT(ReadIndex(&depth, "br depth"));
@@ -1495,6 +1500,7 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
       }
 
       default:
+        printf("HERE!\n");
         return ReportUnexpectedOpcode(opcode);
     }
   }

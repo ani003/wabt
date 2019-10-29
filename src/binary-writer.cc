@@ -662,6 +662,10 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
     case ExprType::Select:
       WriteOpcode(stream_, Opcode::Select);
       break;
+    case ExprType::Setjmp:
+      // printf("Writing Setjmp!!!\n");
+      WriteOpcode(stream_, Opcode::Setjmp);
+      break;
     case ExprType::Store:
       WriteLoadStoreExpr<StoreExpr>(func, expr, "store offset");
       break;
