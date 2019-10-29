@@ -535,14 +535,19 @@ Token WastLexer::GetKeywordToken() {
   ReadReservedChars();
   TokenInfo* info =
       Perfect_Hash::InWordSet(token_start_, cursor_ - token_start_);
+  // printf("lexing: %c%c%c\n", token_start_[0], token_start_[1], token_start_[1]);
   if (!info) {
+    // printf("no info\n");
     return TextToken(TokenType::Reserved);
   }
   if (IsTokenTypeBare(info->token_type)) {
+    // printf("bare\n");
     return BareToken(info->token_type);
   } else if (IsTokenTypeType(info->token_type)) {
+    // printf("type\n");
     return Token(GetLocation(), info->token_type, info->value_type);
   } else {
+    // printf("opcode\n");
     assert(IsTokenTypeOpcode(info->token_type));
     return Token(GetLocation(), info->token_type, info->opcode);
   }

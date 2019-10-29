@@ -111,6 +111,7 @@ class TypeChecker {
   Result OnRethrow();
   Result OnReturn();
   Result OnSelect();
+  Result OnSetjmp();
   Result OnSimdLaneOp(Opcode, uint64_t);
   Result OnSimdShuffleOp(Opcode, v128);
   Result OnStore(Opcode);

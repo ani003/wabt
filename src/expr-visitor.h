@@ -108,6 +108,7 @@ class ExprVisitor::Delegate {
   virtual Result OnReturnCallExpr(ReturnCallExpr*) = 0;
   virtual Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) = 0;
   virtual Result OnSelectExpr(SelectExpr*) = 0;
+  virtual Result OnSetjmpExpr(SetjmpExpr*) = 0;
   virtual Result OnStoreExpr(StoreExpr*) = 0;
   virtual Result OnUnaryExpr(UnaryExpr*) = 0;
   virtual Result OnUnreachableExpr(UnreachableExpr*) = 0;
@@ -176,6 +177,7 @@ class ExprVisitor::DelegateNop : public ExprVisitor::Delegate {
     return Result::Ok;
   }
   Result OnSelectExpr(SelectExpr*) override { return Result::Ok; }
+  Result OnSetjmpExpr(SetjmpExpr*) override { return Result::Ok; }
   Result OnStoreExpr(StoreExpr*) override { return Result::Ok; }
   Result OnUnaryExpr(UnaryExpr*) override { return Result::Ok; }
   Result OnUnreachableExpr(UnreachableExpr*) override { return Result::Ok; }

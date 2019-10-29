@@ -472,3 +472,6 @@ WABT_OPCODE(I32,  I32,  I32,  I32,  2,  0xfe, 0x4b, I32AtomicRmw16CmpxchgU, "i32
 WABT_OPCODE(I64,  I32,  I64,  I64,  1,  0xfe, 0x4c, I64AtomicRmw8CmpxchgU, "i64.atomic.rmw8.cmpxchg_u")
 WABT_OPCODE(I64,  I32,  I64,  I64,  2,  0xfe, 0x4d, I64AtomicRmw16CmpxchgU, "i64.atomic.rmw16.cmpxchg_u")
 WABT_OPCODE(I64,  I32,  I64,  I64,  4,  0xfe, 0x4e, I64AtomicRmw32CmpxchgU, "i64.atomic.rmw32.cmpxchg_u")
+
+
+WABT_OPCODE(___,  ___,  ___,  ___,  0,  0xff, 0x00, Setjmp, "setjmp")

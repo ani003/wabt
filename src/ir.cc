@@ -65,6 +65,7 @@ const char* ExprTypeName[] = {
   "ReturnCall",
   "ReturnCallIndirect",
   "Select",
+  "Setjmp",
   "SimdLaneOp",
   "SimdShuffleOp",
   "LoadSplat",

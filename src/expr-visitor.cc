@@ -134,6 +134,7 @@ Result ExprVisitor::VisitFunc(Func* func) {
 }
 
 Result ExprVisitor::HandleDefaultState(Expr* expr) {
+  // printf("ExprVisitor::HandleDefaultState: %s\n", GetExprTypeName(expr->type()));
   switch (expr->type()) {
     case ExprType::AtomicLoad:
       CHECK_RESULT(delegate_->OnAtomicLoadExpr(cast<AtomicLoadExpr>(expr)));
@@ -336,6 +337,11 @@ Result ExprVisitor::HandleDefaultState(Expr* expr) {
 
     case ExprType::Select:
       CHECK_RESULT(delegate_->OnSelectExpr(cast<SelectExpr>(expr)));
+      break;
+
+    case ExprType::Setjmp:
+      // printf("case ExprType::Setjmp\n");
+      CHECK_RESULT(delegate_->OnSetjmpExpr(cast<SetjmpExpr>(expr)));
       break;
 
     case ExprType::Store:

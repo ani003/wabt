@@ -87,6 +87,7 @@ class Validator : public ExprVisitor::Delegate {
   Result OnReturnCallExpr(ReturnCallExpr*) override;
   Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
   Result OnSelectExpr(SelectExpr*) override;
+  Result OnSetjmpExpr(SetjmpExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
   Result OnUnreachableExpr(UnreachableExpr*) override;
@@ -549,6 +550,7 @@ void Validator::CheckAtomicExpr(const T* expr,
   (typechecker_.*func)(expr->opcode);
 }
 
+
 Result Validator::OnBinaryExpr(BinaryExpr* expr) {
   expr_loc_ = &expr->loc;
   typechecker_.OnBinary(expr->opcode);
@@ -871,6 +873,13 @@ Result Validator::OnReturnCallIndirectExpr(ReturnCallIndirectExpr* expr) {
 Result Validator::OnSelectExpr(SelectExpr* expr) {
   expr_loc_ = &expr->loc;
   typechecker_.OnSelect();
+  return Result::Ok;
+}
+
+Result Validator::OnSetjmpExpr(SetjmpExpr* expr) {
+  // printf("Validator::OnSetjmpExpr\n");
+  expr_loc_ = &expr->loc;
+  typechecker_.OnSetjmp();
   return Result::Ok;
 }
 

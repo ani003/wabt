@@ -105,6 +105,7 @@ void RemoveEscapes(const TextVector& texts, OutputIter out) {
 
 bool IsPlainInstr(TokenType token_type) {
   switch (token_type) {
+    case TokenType::Setjmp:
     case TokenType::Unreachable:
     case TokenType::Nop:
     case TokenType::Drop:
@@ -183,6 +184,7 @@ bool IsExpr(TokenTypePair pair) {
 }
 
 bool IsInstr(TokenTypePair pair) {
+  // printf("here 6: %d, %s\n", IsPlainOrBlockInstr(pair[0]), GetTokenTypeName(pair[1]));
   return IsPlainOrBlockInstr(pair[0]) || IsExpr(pair);
 }
 
@@ -1464,7 +1466,17 @@ Result WastParser::ParsePlainLoadStoreInstr(Location loc,
 Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
   WABT_TRACE(ParsePlainInstr);
   Location loc = GetLocation();
-  switch (Peek()) {
+
+  TokenType t = Peek();
+  switch (t) {
+    case TokenType::Setjmp: {
+      Token token = Consume();
+      ErrorUnlessOpcodeEnabled(token);
+      // out_expr->reset(new UnaryExpr(token.opcode(), loc));
+      out_expr->reset(new SetjmpExpr(loc));
+      break;
+    }
+
     case TokenType::Unreachable:
       Consume();
       out_expr->reset(new UnreachableExpr(loc));
@@ -1808,6 +1820,7 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
     }
 
     default:
+      printf("here 7\n");
       assert(
           !"ParsePlainInstr should only be called when IsPlainInstr() is true");
       return Result::Error;
@@ -2388,6 +2401,7 @@ Result WastParser::ParseActionCommand(CommandPtr* out_command) {
 Result WastParser::ParseModuleCommand(Script* script, CommandPtr* out_command) {
   WABT_TRACE(ParseModuleCommand);
   std::unique_ptr<ScriptModule> script_module;
+
   CHECK_RESULT(ParseScriptModule(&script_module));
 
   auto command = MakeUnique<ModuleCommand>();

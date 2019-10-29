@@ -696,6 +696,13 @@ Result TypeChecker::OnSelect() {
   return result;
 }
 
+Result TypeChecker::OnSetjmp() {
+  // printf("TypeChecker::OnSetjmp\n");
+  Result result = PopAndCheck1Type(Type::I32, "setjmp");
+  PushType(Type::I64);
+  return result;
+}
+
 Result TypeChecker::OnStore(Opcode opcode) {
   return CheckOpcode2(opcode);
 }
