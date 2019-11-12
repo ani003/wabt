@@ -261,6 +261,8 @@ class BinaryReaderDelegate {
   virtual Result OnSelectExpr() = 0;
   virtual Result OnSetjmpExpr() = 0;
   virtual Result OnLongjmpExpr() = 0;
+  virtual Result OnControlExpr(Index func_index) = 0;
+  virtual Result OnRestoreExpr() = 0;
   virtual Result OnStoreExpr(Opcode opcode,
                              uint32_t alignment_log2,
                              Address offset) = 0;

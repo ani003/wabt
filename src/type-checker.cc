@@ -222,6 +222,8 @@ Result TypeChecker::PopAndCheckCall(const TypeVector& param_types,
   return result;
 }
 
+
+
 Result TypeChecker::PopAndCheck1Type(Type expected, const char* desc) {
   Result result = Result::Ok;
   result |= PeekAndCheckType(0, expected);
@@ -707,6 +709,35 @@ Result TypeChecker::OnLongjmp() {
   // printf("TypeChecker::OnSetjmp\n");
   Result result = PopAndCheck2Types(Type::I32, Type::I64, "longjmp");
   return result;
+}
+
+Result TypeChecker::OnControl(const TypeVector& param_types, const TypeVector& result_types) {
+  if(param_types.size() != 2) {
+    return Result::Error;
+  }
+  Type t = param_types[0];
+  if(t != Type::I64) {
+    return Result::Error;
+  }
+  t = param_types[1];
+  if(t != Type::I64) {
+    return Result::Error;
+  }
+
+  PushType(Type::I64);
+  return Result::Ok;
+  // printf("TODO: TypeChecker::OnControl\n");
+  // exit(0);
+  // return PopAndCheckCall(param_types, result_types, "call");
+  // return Result::Error;
+}
+
+
+
+Result TypeChecker::OnRestore() {
+  printf("TODO: TypeChecker::OnRestore\n");
+  exit(0);
+  return Result::Error;
 }
 
 Result TypeChecker::OnStore(Opcode opcode) {

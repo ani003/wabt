@@ -670,6 +670,18 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
       // printf("Writing Setjmp!!!\n");
       WriteOpcode(stream_, Opcode::Longjmp);
       break;
+    
+    case ExprType::Control:{
+      Index index = module_->GetFuncIndex(cast<ControlExpr>(expr)->var);
+      WriteOpcode(stream_, Opcode::Control);
+      WriteU32Leb128WithReloc(index, "function index", RelocType::FuncIndexLEB);
+      break;
+    }
+
+    case ExprType::Restore:
+      // printf("Writing Setjmp!!!\n");
+      WriteOpcode(stream_, Opcode::Restore);
+      break;
     case ExprType::Store:
       WriteLoadStoreExpr<StoreExpr>(func, expr, "store offset");
       break;

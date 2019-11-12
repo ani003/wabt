@@ -203,6 +203,8 @@ class BinaryReaderInterp : public BinaryReaderNop {
   wabt::Result OnSelectExpr() override;
   wabt::Result OnSetjmpExpr() override;
   wabt::Result OnLongjmpExpr() override;
+  wabt::Result OnControlExpr(Index func_index) override;
+  wabt::Result OnRestoreExpr() override;
   wabt::Result OnStoreExpr(wabt::Opcode opcode,
                            uint32_t alignment_log2,
                            Address offset) override;
@@ -1771,6 +1773,38 @@ wabt::Result BinaryReaderInterp::OnSetjmpExpr() {
 wabt::Result BinaryReaderInterp::OnLongjmpExpr() {
   CHECK_RESULT(typechecker_.OnLongjmp());
   CHECK_RESULT(EmitOpcode(Opcode::Longjmp));
+  return wabt::Result::Ok;
+}
+
+// wabt::Result BinaryReaderInterp::OnControlExpr(Index func_index) {
+//   CHECK_RESULT(typechecker_.OnControl());
+//   CHECK_RESULT(EmitOpcode(Opcode::Control));
+//   return wabt::Result::Ok;
+// }
+
+wabt::Result BinaryReaderInterp::OnControlExpr(Index func_index) {
+  Func* func = GetFuncByModuleIndex(func_index);
+  FuncSignature* sig = env_->GetFuncSignature(func->sig_index);
+  CHECK_RESULT(typechecker_.OnControl(sig->param_types, sig->result_types));
+
+  if (func->is_host) {
+    printf("BinaryReaderInterp::OnControlExpr: Can not control to host!\n");
+    // exit(0);
+    return wabt::Result::Error;
+    // CHECK_RESULT(EmitOpcode(Opcode::InterpCallHost));
+    // CHECK_RESULT(EmitI32(TranslateFuncIndexToEnv(func_index)));
+  } else {
+    CHECK_RESULT(EmitOpcode(Opcode::Control));
+    CHECK_RESULT(EmitFuncOffset(cast<DefinedFunc>(func), func_index));
+  }
+
+  return wabt::Result::Ok;
+}
+
+
+wabt::Result BinaryReaderInterp::OnRestoreExpr() {
+  CHECK_RESULT(typechecker_.OnRestore());
+  CHECK_RESULT(EmitOpcode(Opcode::Restore));
   return wabt::Result::Ok;
 }
 

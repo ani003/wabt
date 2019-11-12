@@ -42,6 +42,7 @@ class NameApplier : public ExprVisitor::DelegateNop {
   Result OnBrOnExnExpr(BrOnExnExpr*) override;
   Result OnBrTableExpr(BrTableExpr*) override;
   Result OnCallExpr(CallExpr*) override;
+  Result OnControlExpr(ControlExpr*) override;
   Result OnCallIndirectExpr(CallIndirectExpr*) override;
   Result OnReturnCallExpr(ReturnCallExpr*) override;
   Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
@@ -328,6 +329,11 @@ Result NameApplier::OnThrowExpr(ThrowExpr* expr) {
 }
 
 Result NameApplier::OnCallExpr(CallExpr* expr) {
+  CHECK_RESULT(UseNameForFuncVar(&expr->var));
+  return Result::Ok;
+}
+
+Result NameApplier::OnControlExpr(ControlExpr* expr) {
   CHECK_RESULT(UseNameForFuncVar(&expr->var));
   return Result::Ok;
 }

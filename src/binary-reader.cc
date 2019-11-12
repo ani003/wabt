@@ -631,6 +631,28 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
         CALLBACK0(OnOpcodeBare);
         break;
 
+      // case Opcode::Control:
+      //   CALLBACK0(OnControlExpr);
+      //   CALLBACK0(OnOpcodeBare);
+      //   break;
+
+
+      case Opcode::Control: {
+        Index func_index;
+        CHECK_RESULT(ReadIndex(&func_index, "control function index"));
+        ERROR_UNLESS(func_index < NumTotalFuncs(),
+                     "invalid control function index: %" PRIindex, func_index);
+        CALLBACK(OnControlExpr, func_index);
+        CALLBACK(OnOpcodeIndex, func_index);
+        break;
+      }
+
+
+      case Opcode::Restore:
+        CALLBACK0(OnRestoreExpr);
+        CALLBACK0(OnOpcodeBare);
+        break;
+
       case Opcode::Br: {
         Index depth;
         CHECK_RESULT(ReadIndex(&depth, "br depth"));

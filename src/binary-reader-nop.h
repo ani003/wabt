@@ -268,6 +268,8 @@ class BinaryReaderNop : public BinaryReaderDelegate {
   Result OnSelectExpr() override { return Result::Ok; }
   Result OnSetjmpExpr() override { return Result::Ok; }
   Result OnLongjmpExpr() override { return Result::Ok; }
+  Result OnControlExpr(Index func_index) override { return Result::Ok; }
+  Result OnRestoreExpr() override { return Result::Ok; }
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
                      Address offset) override {

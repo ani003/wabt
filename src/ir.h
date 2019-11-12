@@ -201,6 +201,8 @@ enum class ExprType {
   SimdShuffleOp,
   LoadSplat,
   Longjmp,
+  Control,
+  Restore,
   Store,
   TableCopy,
   ElemDrop,
@@ -275,6 +277,8 @@ typedef ExprMixin<ExprType::Return> ReturnExpr;
 typedef ExprMixin<ExprType::Select> SelectExpr;
 typedef ExprMixin<ExprType::Setjmp> SetjmpExpr;
 typedef ExprMixin<ExprType::Longjmp> LongjmpExpr;
+// typedef ExprMixin<ExprType::Control> ControlExpr;
+typedef ExprMixin<ExprType::Restore> RestoreExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;
 typedef ExprMixin<ExprType::RefNull> RefNullExpr;
 typedef ExprMixin<ExprType::RefIsNull> RefIsNullExpr;
@@ -324,6 +328,7 @@ class VarExpr : public ExprMixin<TypeEnum> {
 typedef VarExpr<ExprType::Br> BrExpr;
 typedef VarExpr<ExprType::BrIf> BrIfExpr;
 typedef VarExpr<ExprType::Call> CallExpr;
+typedef VarExpr<ExprType::Control> ControlExpr;
 typedef VarExpr<ExprType::GlobalGet> GlobalGetExpr;
 typedef VarExpr<ExprType::GlobalSet> GlobalSetExpr;
 typedef VarExpr<ExprType::LocalGet> LocalGetExpr;

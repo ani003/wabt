@@ -107,6 +107,8 @@ bool IsPlainInstr(TokenType token_type) {
   switch (token_type) {
     case TokenType::Setjmp:
     case TokenType::Longjmp:
+    case TokenType::Control:
+    case TokenType::Restore:
     case TokenType::Unreachable:
     case TokenType::Nop:
     case TokenType::Drop:
@@ -1485,6 +1487,30 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       out_expr->reset(new LongjmpExpr(loc));
       break;
     }
+
+    // case TokenType::Control: {
+    //   Token token = Consume();
+    //   ErrorUnlessOpcodeEnabled(token);
+    //   // out_expr->reset(new UnaryExpr(token.opcode(), loc));
+    //   out_expr->reset(new ControlExpr(loc));
+    //   break;
+    // }
+
+    case TokenType::Control:
+      Consume();
+      CHECK_RESULT(ParsePlainInstrVar<ControlExpr>(loc, out_expr));
+      break;
+
+    case TokenType::Restore: {
+      Token token = Consume();
+      ErrorUnlessOpcodeEnabled(token);
+      // out_expr->reset(new UnaryExpr(token.opcode(), loc));
+      out_expr->reset(new RestoreExpr(loc));
+      break;
+    }
+
+    
+
 
     case TokenType::Unreachable:
       Consume();

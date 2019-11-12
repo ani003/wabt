@@ -89,6 +89,8 @@ class Validator : public ExprVisitor::Delegate {
   Result OnSelectExpr(SelectExpr*) override;
   Result OnSetjmpExpr(SetjmpExpr*) override;
   Result OnLongjmpExpr(LongjmpExpr*) override;
+  Result OnControlExpr(ControlExpr*) override;
+  Result OnRestoreExpr(RestoreExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
   Result OnUnreachableExpr(UnreachableExpr*) override;
@@ -888,6 +890,23 @@ Result Validator::OnLongjmpExpr(LongjmpExpr* expr) {
   // printf("Validator::OnSetjmpExpr\n");
   expr_loc_ = &expr->loc;
   typechecker_.OnLongjmp();
+  return Result::Ok;
+}
+
+Result Validator::OnControlExpr(ControlExpr* expr) {
+  expr_loc_ = &expr->loc;
+  const Func* callee;
+  if (Succeeded(CheckFuncVar(&expr->var, &callee))) {
+    typechecker_.OnControl(callee->decl.sig.param_types,
+                        callee->decl.sig.result_types);
+  }
+  return Result::Ok;
+}
+
+Result Validator::OnRestoreExpr(RestoreExpr* expr) {
+  // printf("Validator::OnSetjmpExpr\n");
+  expr_loc_ = &expr->loc;
+  typechecker_.OnRestore();
   return Result::Ok;
 }
 

@@ -43,6 +43,7 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Result OnBrOnExnExpr(BrOnExnExpr*) override;
   Result OnBrTableExpr(BrTableExpr*) override;
   Result OnCallExpr(CallExpr*) override;
+  Result OnControlExpr(ControlExpr*) override;
   Result OnCallIndirectExpr(CallIndirectExpr*) override;
   Result OnReturnCallExpr(ReturnCallExpr *) override;
   Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
@@ -276,6 +277,11 @@ Result NameResolver::OnBrTableExpr(BrTableExpr* expr) {
 }
 
 Result NameResolver::OnCallExpr(CallExpr* expr) {
+  ResolveFuncVar(&expr->var);
+  return Result::Ok;
+}
+
+Result NameResolver::OnControlExpr(ControlExpr* expr) {
   ResolveFuncVar(&expr->var);
   return Result::Ok;
 }

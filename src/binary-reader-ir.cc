@@ -187,6 +187,8 @@ class BinaryReaderIR : public BinaryReaderNop {
   Result OnSelectExpr() override;
   Result OnSetjmpExpr() override;
   Result OnLongjmpExpr() override;
+  Result OnControlExpr(Index func_index) override;
+  Result OnRestoreExpr() override;
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
                      Address offset) override;
@@ -914,6 +916,19 @@ Result BinaryReaderIR::OnSetjmpExpr() {
 
 Result BinaryReaderIR::OnLongjmpExpr() {
   return AppendExpr(MakeUnique<LongjmpExpr>());
+}
+
+// Result BinaryReaderIR::OnControlExpr() {
+//   return AppendExpr(MakeUnique<ControlExpr>());
+// }
+
+Result BinaryReaderIR::OnControlExpr(Index func_index) {
+  assert(func_index < module_->funcs.size());
+  return AppendExpr(MakeUnique<ControlExpr>(Var(func_index)));
+}
+
+Result BinaryReaderIR::OnRestoreExpr() {
+  return AppendExpr(MakeUnique<RestoreExpr>());
 }
 
 Result BinaryReaderIR::OnGlobalSetExpr(Index global_index) {
