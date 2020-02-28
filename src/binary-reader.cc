@@ -621,16 +621,6 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
         CALLBACK0(OnOpcodeBare);
         break;
 
-      case Opcode::Setjmp:
-        CALLBACK0(OnSetjmpExpr);
-        CALLBACK0(OnOpcodeBare);
-        break;
-
-      case Opcode::Longjmp:
-        CALLBACK0(OnLongjmpExpr);
-        CALLBACK0(OnOpcodeBare);
-        break;
-
       // case Opcode::Control:
       //   CALLBACK0(OnControlExpr);
       //   CALLBACK0(OnOpcodeBare);

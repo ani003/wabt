@@ -259,8 +259,6 @@ class BinaryReaderDelegate {
   virtual Result OnReturnCallIndirectExpr(Index sig_index,
                                           Index table_index) = 0;
   virtual Result OnSelectExpr() = 0;
-  virtual Result OnSetjmpExpr() = 0;
-  virtual Result OnLongjmpExpr() = 0;
   virtual Result OnControlExpr(Index func_index) = 0;
   virtual Result OnRestoreExpr() = 0;
   virtual Result OnStoreExpr(Opcode opcode,

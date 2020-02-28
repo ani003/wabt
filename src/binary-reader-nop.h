@@ -266,8 +266,6 @@ class BinaryReaderNop : public BinaryReaderDelegate {
   Result OnReturnCallIndirectExpr(Index sig_index, Index table_index) override { return Result::Ok; }
   Result OnReturnExpr() override { return Result::Ok; }
   Result OnSelectExpr() override { return Result::Ok; }
-  Result OnSetjmpExpr() override { return Result::Ok; }
-  Result OnLongjmpExpr() override { return Result::Ok; }
   Result OnControlExpr(Index func_index) override { return Result::Ok; }
   Result OnRestoreExpr() override { return Result::Ok; }
   Result OnStoreExpr(Opcode opcode,

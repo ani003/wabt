@@ -698,19 +698,6 @@ Result TypeChecker::OnSelect() {
   return result;
 }
 
-Result TypeChecker::OnSetjmp() {
-  // printf("TypeChecker::OnSetjmp\n");
-  Result result = PopAndCheck1Type(Type::I32, "setjmp");
-  PushType(Type::I64);
-  return result;
-}
-
-Result TypeChecker::OnLongjmp() {
-  // printf("TypeChecker::OnSetjmp\n");
-  Result result = PopAndCheck2Types(Type::I32, Type::I64, "longjmp");
-  return result;
-}
-
 Result TypeChecker::OnControl(const TypeVector& param_types, const TypeVector& result_types) {
   if(param_types.size() != 2) {
     return Result::Error;
@@ -724,8 +711,11 @@ Result TypeChecker::OnControl(const TypeVector& param_types, const TypeVector& r
     return Result::Error;
   }
 
+  Result result = PopAndCheck1Type(Type::I64, "control call_arg");
+
   PushType(Type::I64);
-  return Result::Ok;
+
+  return result;
   // printf("TODO: TypeChecker::OnControl\n");
   // exit(0);
   // return PopAndCheckCall(param_types, result_types, "call");

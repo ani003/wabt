@@ -185,8 +185,6 @@ class BinaryReaderIR : public BinaryReaderNop {
   Result OnRethrowExpr() override;
   Result OnReturnExpr() override;
   Result OnSelectExpr() override;
-  Result OnSetjmpExpr() override;
-  Result OnLongjmpExpr() override;
   Result OnControlExpr(Index func_index) override;
   Result OnRestoreExpr() override;
   Result OnStoreExpr(Opcode opcode,
@@ -908,14 +906,6 @@ Result BinaryReaderIR::OnReturnExpr() {
 
 Result BinaryReaderIR::OnSelectExpr() {
   return AppendExpr(MakeUnique<SelectExpr>());
-}
-
-Result BinaryReaderIR::OnSetjmpExpr() {
-  return AppendExpr(MakeUnique<SetjmpExpr>());
-}
-
-Result BinaryReaderIR::OnLongjmpExpr() {
-  return AppendExpr(MakeUnique<LongjmpExpr>());
 }
 
 // Result BinaryReaderIR::OnControlExpr() {

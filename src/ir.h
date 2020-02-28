@@ -196,11 +196,9 @@ enum class ExprType {
   ReturnCall,
   ReturnCallIndirect,
   Select,
-  Setjmp,
   SimdLaneOp,
   SimdShuffleOp,
   LoadSplat,
-  Longjmp,
   Control,
   Restore,
   Store,
@@ -275,8 +273,6 @@ typedef ExprMixin<ExprType::Nop> NopExpr;
 typedef ExprMixin<ExprType::Rethrow> RethrowExpr;
 typedef ExprMixin<ExprType::Return> ReturnExpr;
 typedef ExprMixin<ExprType::Select> SelectExpr;
-typedef ExprMixin<ExprType::Setjmp> SetjmpExpr;
-typedef ExprMixin<ExprType::Longjmp> LongjmpExpr;
 // typedef ExprMixin<ExprType::Control> ControlExpr;
 typedef ExprMixin<ExprType::Restore> RestoreExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;

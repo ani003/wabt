@@ -662,14 +662,6 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
     case ExprType::Select:
       WriteOpcode(stream_, Opcode::Select);
       break;
-    case ExprType::Setjmp:
-      // printf("Writing Setjmp!!!\n");
-      WriteOpcode(stream_, Opcode::Setjmp);
-      break;
-    case ExprType::Longjmp:
-      // printf("Writing Setjmp!!!\n");
-      WriteOpcode(stream_, Opcode::Longjmp);
-      break;
     
     case ExprType::Control:{
       Index index = module_->GetFuncIndex(cast<ControlExpr>(expr)->var);
@@ -679,7 +671,6 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
     }
 
     case ExprType::Restore:
-      // printf("Writing Setjmp!!!\n");
       WriteOpcode(stream_, Opcode::Restore);
       break;
     case ExprType::Store:

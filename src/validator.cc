@@ -87,8 +87,6 @@ class Validator : public ExprVisitor::Delegate {
   Result OnReturnCallExpr(ReturnCallExpr*) override;
   Result OnReturnCallIndirectExpr(ReturnCallIndirectExpr*) override;
   Result OnSelectExpr(SelectExpr*) override;
-  Result OnSetjmpExpr(SetjmpExpr*) override;
-  Result OnLongjmpExpr(LongjmpExpr*) override;
   Result OnControlExpr(ControlExpr*) override;
   Result OnRestoreExpr(RestoreExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
@@ -879,20 +877,6 @@ Result Validator::OnSelectExpr(SelectExpr* expr) {
   return Result::Ok;
 }
 
-Result Validator::OnSetjmpExpr(SetjmpExpr* expr) {
-  // printf("Validator::OnSetjmpExpr\n");
-  expr_loc_ = &expr->loc;
-  typechecker_.OnSetjmp();
-  return Result::Ok;
-}
-
-Result Validator::OnLongjmpExpr(LongjmpExpr* expr) {
-  // printf("Validator::OnSetjmpExpr\n");
-  expr_loc_ = &expr->loc;
-  typechecker_.OnLongjmp();
-  return Result::Ok;
-}
-
 Result Validator::OnControlExpr(ControlExpr* expr) {
   expr_loc_ = &expr->loc;
   const Func* callee;
@@ -904,7 +888,6 @@ Result Validator::OnControlExpr(ControlExpr* expr) {
 }
 
 Result Validator::OnRestoreExpr(RestoreExpr* expr) {
-  // printf("Validator::OnSetjmpExpr\n");
   expr_loc_ = &expr->loc;
   typechecker_.OnRestore();
   return Result::Ok;

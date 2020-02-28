@@ -31,8 +31,6 @@ br_if, TokenType::BrIf, Opcode::BrIf
 br_on_exn, TokenType::BrOnExn, Opcode::BrOnExn
 br_table, TokenType::BrTable, Opcode::BrTable
 br, TokenType::Br, Opcode::Br
-setjmp, TokenType::Setjmp, Opcode::Setjmp
-longjmp, TokenType::Longjmp, Opcode::Longjmp
 control, TokenType::Control, Opcode::Control
 restore, TokenType::Restore, Opcode::Restore
 call_indirect, TokenType::CallIndirect, Opcode::CallIndirect

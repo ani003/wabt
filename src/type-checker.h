@@ -111,8 +111,6 @@ class TypeChecker {
   Result OnRethrow();
   Result OnReturn();
   Result OnSelect();
-  Result OnSetjmp();
-  Result OnLongjmp();
   Result OnControl(const TypeVector& param_types, const TypeVector& result_types);
   Result OnRestore();
   Result OnSimdLaneOp(Opcode, uint64_t);
