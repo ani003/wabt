@@ -113,6 +113,7 @@ class TypeChecker {
   Result OnSelect();
   Result OnControl(const TypeVector& param_types, const TypeVector& result_types);
   Result OnRestore();
+  Result OnContinuationCopy();
   Result OnSimdLaneOp(Opcode, uint64_t);
   Result OnSimdShuffleOp(Opcode, v128);
   Result OnStore(Opcode);

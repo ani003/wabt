@@ -204,6 +204,7 @@ class BinaryReaderLogging : public BinaryReaderDelegate {
   Result OnSelectExpr() override;
   Result OnControlExpr(Index func_index) override;
   Result OnRestoreExpr() override;
+  Result OnContinuationCopyExpr() override;
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
                      Address offset) override;

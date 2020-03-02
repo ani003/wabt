@@ -263,6 +263,7 @@ WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xd2, RefFunc, "ref.func")
 
 WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD5, Control, "control")
 WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD6, Restore, "restore")
+WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD7, ContinuationCopy, "continuation_copy")
 
 
 

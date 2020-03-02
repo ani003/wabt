@@ -643,6 +643,11 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
         CALLBACK0(OnOpcodeBare);
         break;
 
+      case Opcode::ContinuationCopy:
+        CALLBACK0(OnContinuationCopyExpr);
+        CALLBACK0(OnOpcodeBare);
+        break;
+
       case Opcode::Br: {
         Index depth;
         CHECK_RESULT(ReadIndex(&depth, "br depth"));

@@ -33,6 +33,7 @@ br_table, TokenType::BrTable, Opcode::BrTable
 br, TokenType::Br, Opcode::Br
 control, TokenType::Control, Opcode::Control
 restore, TokenType::Restore, Opcode::Restore
+continuation_copy, TokenType::ContinuationCopy, Opcode::ContinuationCopy
 call_indirect, TokenType::CallIndirect, Opcode::CallIndirect
 call, TokenType::Call, Opcode::Call
 catch, TokenType::Catch, Opcode::Catch

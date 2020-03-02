@@ -726,7 +726,12 @@ Result TypeChecker::OnControl(const TypeVector& param_types, const TypeVector& r
 
 Result TypeChecker::OnRestore() {
   Result result = PopAndCheck2Types(Type::I64, Type::I64, "restore kid");
-  // exit(0);
+  return result;
+}
+
+Result TypeChecker::OnContinuationCopy() {
+  Result result = PopAndCheck1Type(Type::I64, "copy kid");
+  PushType(Type::I64);
   return result;
 }
 

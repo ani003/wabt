@@ -89,6 +89,7 @@ class Validator : public ExprVisitor::Delegate {
   Result OnSelectExpr(SelectExpr*) override;
   Result OnControlExpr(ControlExpr*) override;
   Result OnRestoreExpr(RestoreExpr*) override;
+  Result OnContinuationCopyExpr(ContinuationCopyExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
   Result OnUnreachableExpr(UnreachableExpr*) override;
@@ -890,6 +891,12 @@ Result Validator::OnControlExpr(ControlExpr* expr) {
 Result Validator::OnRestoreExpr(RestoreExpr* expr) {
   expr_loc_ = &expr->loc;
   typechecker_.OnRestore();
+  return Result::Ok;
+}
+
+Result Validator::OnContinuationCopyExpr(ContinuationCopyExpr* expr) {
+  expr_loc_ = &expr->loc;
+  typechecker_.OnContinuationCopy();
   return Result::Ok;
 }
 
