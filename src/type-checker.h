@@ -115,6 +115,7 @@ class TypeChecker {
   Result OnRestore();
   Result OnContinuationCopy();
   Result OnPrompt();
+  Result OnContinuationDelete();
   Result OnSimdLaneOp(Opcode, uint64_t);
   Result OnSimdShuffleOp(Opcode, v128);
   Result OnStore(Opcode);

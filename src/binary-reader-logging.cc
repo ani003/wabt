@@ -744,6 +744,7 @@ DEFINE_INDEX_DESC(OnControlExpr, "func_index")
 DEFINE0(OnRestoreExpr)
 DEFINE0(OnContinuationCopyExpr)
 DEFINE0(OnPromptExpr)
+DEFINE0(OnContinuationDeleteExpr)
 DEFINE_LOAD_STORE_OPCODE(OnLoadSplatExpr);
 DEFINE_LOAD_STORE_OPCODE(OnStoreExpr);
 DEFINE_INDEX_DESC(OnThrowExpr, "event_index")

@@ -203,6 +203,7 @@ enum class ExprType {
   Restore,
   ContinuationCopy,
   Prompt,
+  ContinuationDelete,
   Store,
   TableCopy,
   ElemDrop,
@@ -279,6 +280,7 @@ typedef ExprMixin<ExprType::Select> SelectExpr;
 typedef ExprMixin<ExprType::Restore> RestoreExpr;
 typedef ExprMixin<ExprType::ContinuationCopy> ContinuationCopyExpr;
 typedef ExprMixin<ExprType::Prompt> PromptExpr;
+typedef ExprMixin<ExprType::ContinuationDelete> ContinuationDeleteExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;
 typedef ExprMixin<ExprType::RefNull> RefNullExpr;
 typedef ExprMixin<ExprType::RefIsNull> RefIsNullExpr;

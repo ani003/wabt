@@ -112,6 +112,7 @@ class ExprVisitor::Delegate {
   virtual Result OnRestoreExpr(RestoreExpr*) = 0;
   virtual Result OnContinuationCopyExpr(ContinuationCopyExpr*) = 0;
   virtual Result OnPromptExpr(PromptExpr*) = 0;
+  virtual Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) = 0;
   virtual Result OnStoreExpr(StoreExpr*) = 0;
   virtual Result OnUnaryExpr(UnaryExpr*) = 0;
   virtual Result OnUnreachableExpr(UnreachableExpr*) = 0;
@@ -184,6 +185,7 @@ class ExprVisitor::DelegateNop : public ExprVisitor::Delegate {
   Result OnRestoreExpr(RestoreExpr*) override { return Result::Ok; }
   Result OnContinuationCopyExpr(ContinuationCopyExpr*) override { return Result::Ok; }
   Result OnPromptExpr(PromptExpr*) override { return Result::Ok; }
+  Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) override { return Result::Ok; }
   Result OnStoreExpr(StoreExpr*) override { return Result::Ok; }
   Result OnUnaryExpr(UnaryExpr*) override { return Result::Ok; }
   Result OnUnreachableExpr(UnreachableExpr*) override { return Result::Ok; }

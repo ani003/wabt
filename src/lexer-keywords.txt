@@ -35,6 +35,7 @@ control, TokenType::Control, Opcode::Control
 restore, TokenType::Restore, Opcode::Restore
 continuation_copy, TokenType::ContinuationCopy, Opcode::ContinuationCopy
 prompt, TokenType::Prompt, Opcode::Prompt
+continuation_delete, TokenType::ContinuationDelete, Opcode::ContinuationDelete
 call_indirect, TokenType::CallIndirect, Opcode::CallIndirect
 call, TokenType::Call, Opcode::Call
 catch, TokenType::Catch, Opcode::Catch

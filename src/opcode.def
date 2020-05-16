@@ -265,6 +265,7 @@ WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD5, Control, "control")
 WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD6, Restore, "restore")
 WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD7, ContinuationCopy, "continuation_copy")
 WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD8, Prompt, "prompt")
+WABT_OPCODE(___,  ___,  ___,  ___,  0,  0,    0xD9, ContinuationDelete, "continuation_delete")
 
 
 

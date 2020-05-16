@@ -189,6 +189,7 @@ class BinaryReaderIR : public BinaryReaderNop {
   Result OnRestoreExpr() override;
   Result OnContinuationCopyExpr() override;
   Result OnPromptExpr() override;
+  Result OnContinuationDeleteExpr() override;
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
                      Address offset) override;
@@ -929,6 +930,10 @@ Result BinaryReaderIR::OnContinuationCopyExpr() {
 
 Result BinaryReaderIR::OnPromptExpr() {
   return AppendExpr(MakeUnique<PromptExpr>());
+}
+
+Result BinaryReaderIR::OnContinuationDeleteExpr() {
+  return AppendExpr(MakeUnique<ContinuationDeleteExpr>());
 }
 
 Result BinaryReaderIR::OnGlobalSetExpr(Index global_index) {

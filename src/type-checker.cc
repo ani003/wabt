@@ -739,6 +739,11 @@ Result TypeChecker::OnPrompt() {
   return Result::Ok;
 }
 
+Result TypeChecker::OnContinuationDelete() {
+  Result result = PopAndCheck1Type(Type::I64, "delete kid");
+  return result;
+}
+
 Result TypeChecker::OnStore(Opcode opcode) {
   return CheckOpcode2(opcode);
 }
