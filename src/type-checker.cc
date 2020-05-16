@@ -735,6 +735,10 @@ Result TypeChecker::OnContinuationCopy() {
   return result;
 }
 
+Result TypeChecker::OnPrompt() {
+  return Result::Ok;
+}
+
 Result TypeChecker::OnStore(Opcode opcode) {
   return CheckOpcode2(opcode);
 }

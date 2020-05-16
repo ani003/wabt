@@ -676,6 +676,9 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
     case ExprType::ContinuationCopy:
       WriteOpcode(stream_, Opcode::ContinuationCopy);
       break;
+    case ExprType::Prompt:
+      WriteOpcode(stream_, Opcode::Prompt);
+      break;
     case ExprType::Store:
       WriteLoadStoreExpr<StoreExpr>(func, expr, "store offset");
       break;

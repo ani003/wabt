@@ -204,6 +204,7 @@ class BinaryReaderInterp : public BinaryReaderNop {
   wabt::Result OnControlExpr(Index func_index) override;
   wabt::Result OnRestoreExpr() override;
   wabt::Result OnContinuationCopyExpr() override;
+  wabt::Result OnPromptExpr() override;
   wabt::Result OnStoreExpr(wabt::Opcode opcode,
                            uint32_t alignment_log2,
                            Address offset) override;
@@ -1797,6 +1798,12 @@ wabt::Result BinaryReaderInterp::OnRestoreExpr() {
 wabt::Result BinaryReaderInterp::OnContinuationCopyExpr() {
   CHECK_RESULT(typechecker_.OnContinuationCopy());
   CHECK_RESULT(EmitOpcode(Opcode::ContinuationCopy));
+  return wabt::Result::Ok;
+}
+
+wabt::Result BinaryReaderInterp::OnPromptExpr() {
+  CHECK_RESULT(typechecker_.OnPrompt());
+  CHECK_RESULT(EmitOpcode(Opcode::Prompt));
   return wabt::Result::Ok;
 }
 

@@ -351,6 +351,10 @@ Result ExprVisitor::HandleDefaultState(Expr* expr) {
       CHECK_RESULT(delegate_->OnContinuationCopyExpr(cast<ContinuationCopyExpr>(expr)));
       break;
 
+    case ExprType::Prompt:
+      CHECK_RESULT(delegate_->OnPromptExpr(cast<PromptExpr>(expr)));
+      break;
+
     case ExprType::Store:
       CHECK_RESULT(delegate_->OnStoreExpr(cast<StoreExpr>(expr)));
       break;

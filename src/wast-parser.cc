@@ -108,6 +108,7 @@ bool IsPlainInstr(TokenType token_type) {
     case TokenType::Control:
     case TokenType::Restore:
     case TokenType::ContinuationCopy:
+    case TokenType::Prompt:
     case TokenType::Unreachable:
     case TokenType::Nop:
     case TokenType::Drop:
@@ -1496,6 +1497,13 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       Token token = Consume();
       ErrorUnlessOpcodeEnabled(token);
       out_expr->reset(new ContinuationCopyExpr(loc));
+      break;
+    }
+
+    case TokenType::Prompt: {
+      Token token = Consume();
+      ErrorUnlessOpcodeEnabled(token);
+      out_expr->reset(new PromptExpr(loc));
       break;
     }
 

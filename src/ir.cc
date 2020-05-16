@@ -71,6 +71,7 @@ const char* ExprTypeName[] = {
   "Control",
   "Restore",
   "ContinuationCopy",
+  "Prompt",
   "Store",
   "TableCopy",
   "ElemDrop",

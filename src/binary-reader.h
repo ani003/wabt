@@ -262,6 +262,7 @@ class BinaryReaderDelegate {
   virtual Result OnControlExpr(Index func_index) = 0;
   virtual Result OnRestoreExpr() = 0;
   virtual Result OnContinuationCopyExpr() = 0;
+  virtual Result OnPromptExpr() = 0;
   virtual Result OnStoreExpr(Opcode opcode,
                              uint32_t alignment_log2,
                              Address offset) = 0;
