@@ -56,6 +56,8 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Result OnLocalTeeExpr(LocalTeeExpr*) override;
   Result BeginLoopExpr(LoopExpr*) override;
   Result EndLoopExpr(LoopExpr*) override;
+  Result BeginPromptExpr(PromptExpr*) override;
+  Result EndPromptExpr(PromptExpr*) override;
   Result OnDataDropExpr(DataDropExpr*) override;
   Result OnMemoryInitExpr(MemoryInitExpr*) override;
   Result OnElemDropExpr(ElemDropExpr*) override;
@@ -70,6 +72,8 @@ class NameResolver : public ExprVisitor::DelegateNop {
 
  private:
   void PrintError(const Location* loc, const char* fmt, ...);
+  void PushLabelStack();
+  void PopLabelStack();
   void PushLabel(const std::string& label);
   void PopLabel();
   void CheckDuplicateBindings(const BindingHash* bindings, const char* desc);
@@ -102,14 +106,14 @@ class NameResolver : public ExprVisitor::DelegateNop {
   Module* current_module_ = nullptr;
   Func* current_func_ = nullptr;
   ExprVisitor visitor_;
-  std::vector<std::string> labels_;
+  std::vector<std::vector<std::string>> labels_stack_;
   Result result_ = Result::Ok;
 };
 
 NameResolver::NameResolver(Script* script, Errors* errors)
     : errors_(errors),
       script_(script),
-      visitor_(this) {}
+      visitor_(this) { PushLabelStack(); }
 
 }  // end anonymous namespace
 
@@ -121,12 +125,20 @@ void WABT_PRINTF_FORMAT(3, 4) NameResolver::PrintError(const Location* loc,
   errors_->emplace_back(ErrorLevel::Error, *loc, buffer);
 }
 
+void NameResolver::PushLabelStack() {
+  labels_stack_.push_back(std::vector<std::string>());
+}
+
+void NameResolver::PopLabelStack() {
+  labels_stack_.pop_back();
+}
+
 void NameResolver::PushLabel(const std::string& label) {
-  labels_.push_back(label);
+  labels_stack_.back().push_back(label);
 }
 
 void NameResolver::PopLabel() {
-  labels_.pop_back();
+  labels_stack_.back().pop_back();
 }
 
 void NameResolver::CheckDuplicateBindings(const BindingHash* bindings,
@@ -149,10 +161,10 @@ void NameResolver::PrintDuplicateBindingsError(const BindingHash::value_type& a,
 
 void NameResolver::ResolveLabelVar(Var* var) {
   if (var->is_name()) {
-    for (int i = labels_.size() - 1; i >= 0; --i) {
-      const std::string& label = labels_[i];
+    for (int i = labels_stack_.back().size() - 1; i >= 0; --i) {
+      const std::string& label = labels_stack_.back()[i];
       if (label == var->name()) {
-        var->set_index(labels_.size() - i - 1);
+        var->set_index(labels_stack_.back().size() - i - 1);
         return;
       }
     }
@@ -250,6 +262,19 @@ Result NameResolver::BeginLoopExpr(LoopExpr* expr) {
 
 Result NameResolver::EndLoopExpr(LoopExpr* expr) {
   PopLabel();
+  return Result::Ok;
+}
+
+Result NameResolver::BeginPromptExpr(PromptExpr* expr) {
+  PushLabelStack();
+  // PushLabel(expr->block.label);
+  ResolveBlockDeclarationVar(&expr->block.decl);
+  return Result::Ok;
+}
+
+Result NameResolver::EndPromptExpr(PromptExpr* expr) {
+  // PopLabel();
+  PopLabelStack();
   return Result::Ok;
 }
 

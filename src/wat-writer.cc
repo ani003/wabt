@@ -565,7 +565,8 @@ class WatWriter::ExprVisitorDelegate : public ExprVisitor::Delegate {
   Result OnControlExpr(ControlExpr*) override;
   Result OnRestoreExpr(RestoreExpr*) override;
   Result OnContinuationCopyExpr(ContinuationCopyExpr*) override;
-  Result OnPromptExpr(PromptExpr*) override;
+  Result BeginPromptExpr(PromptExpr*) override;
+  Result EndPromptExpr(PromptExpr*) override;
   Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
@@ -742,6 +743,17 @@ Result WatWriter::ExprVisitorDelegate::EndLoopExpr(LoopExpr* expr) {
   return Result::Ok;
 }
 
+Result WatWriter::ExprVisitorDelegate::BeginPromptExpr(PromptExpr* expr) {
+  writer_->WriteBeginBlock(LabelType::Prompt, expr->block,
+                           Opcode::Prompt_Opcode.GetName());
+  return Result::Ok;
+}
+
+Result WatWriter::ExprVisitorDelegate::EndPromptExpr(PromptExpr* expr) {
+  writer_->WriteEndBlock();
+  return Result::Ok;
+}
+
 Result WatWriter::ExprVisitorDelegate::OnMemoryCopyExpr(MemoryCopyExpr* expr) {
   writer_->WritePutsNewline(Opcode::MemoryCopy_Opcode.GetName());
   return Result::Ok;
@@ -870,10 +882,10 @@ Result WatWriter::ExprVisitorDelegate::OnContinuationCopyExpr(ContinuationCopyEx
   return Result::Ok;
 }
 
-Result WatWriter::ExprVisitorDelegate::OnPromptExpr(PromptExpr* expr) {
-  writer_->WritePutsNewline(Opcode::Prompt_Opcode.GetName());
-  return Result::Ok;
-}
+// Result WatWriter::ExprVisitorDelegate::OnPromptExpr(PromptExpr* expr) {
+//   writer_->WritePutsNewline(Opcode::Prompt_Opcode.GetName());
+//   return Result::Ok;
+// }
 
 Result WatWriter::ExprVisitorDelegate::OnContinuationDeleteExpr(ContinuationDeleteExpr* expr) {
   writer_->WritePutsNewline(Opcode::ContinuationDelete_Opcode.GetName());
@@ -1151,6 +1163,10 @@ void WatWriter::WriteFoldedExpr(const Expr* expr) {
       PushExpr(expr, 0, cast<LoopExpr>(expr)->block.decl.sig.GetNumResults());
       break;
 
+    case ExprType::Prompt:
+      PushExpr(expr, 0, cast<PromptExpr>(expr)->block.decl.sig.GetNumResults());
+      break;
+
     case ExprType::Nop:
       PushExpr(expr, 0, 0);
       break;
@@ -1299,6 +1315,15 @@ void WatWriter::FlushExprTree(const ExprTree& expr_tree) {
       WriteBeginBlock(LabelType::Loop, cast<LoopExpr>(expr_tree.expr)->block,
                       Opcode::Loop_Opcode.GetName());
       WriteFoldedExprList(cast<LoopExpr>(expr_tree.expr)->block.exprs);
+      FlushExprTreeStack();
+      WriteCloseNewline();
+      break;
+
+    case ExprType::Prompt:
+      WritePuts("(", NextChar::None);
+      WriteBeginBlock(LabelType::Prompt, cast<PromptExpr>(expr_tree.expr)->block,
+                      Opcode::Prompt_Opcode.GetName());
+      WriteFoldedExprList(cast<PromptExpr>(expr_tree.expr)->block.exprs);
       FlushExprTreeStack();
       WriteCloseNewline();
       break;

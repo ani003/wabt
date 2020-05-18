@@ -108,7 +108,7 @@ bool IsPlainInstr(TokenType token_type) {
     case TokenType::Control:
     case TokenType::Restore:
     case TokenType::ContinuationCopy:
-    case TokenType::Prompt:
+    // case TokenType::Prompt:
     case TokenType::ContinuationDelete:
     case TokenType::Unreachable:
     case TokenType::Nop:
@@ -173,6 +173,7 @@ bool IsBlockInstr(TokenType token_type) {
     case TokenType::Loop:
     case TokenType::If:
     case TokenType::Try:
+    case TokenType::Prompt:
       return true;
     default:
       return false;
@@ -302,6 +303,11 @@ class ResolveFuncTypesExprVisitorDelegate : public ExprVisitor::DelegateNop {
   }
 
   Result BeginTryExpr(TryExpr* expr) override {
+    ResolveBlockDeclaration(expr->loc, &expr->block.decl);
+    return Result::Ok;
+  }
+
+  Result BeginPromptExpr(PromptExpr* expr) override {
     ResolveBlockDeclaration(expr->loc, &expr->block.decl);
     return Result::Ok;
   }
@@ -1501,12 +1507,12 @@ Result WastParser::ParsePlainInstr(std::unique_ptr<Expr>* out_expr) {
       break;
     }
 
-    case TokenType::Prompt: {
-      Token token = Consume();
-      ErrorUnlessOpcodeEnabled(token);
-      out_expr->reset(new PromptExpr(loc));
-      break;
-    }
+    // case TokenType::Prompt: {
+    //   Token token = Consume();
+    //   ErrorUnlessOpcodeEnabled(token);
+    //   out_expr->reset(new PromptExpr(loc));
+    //   break;
+    // }
 
     case TokenType::ContinuationDelete: {
       Token token = Consume();
@@ -2118,6 +2124,17 @@ Result WastParser::ParseBlockInstr(std::unique_ptr<Expr>* out_expr) {
       break;
     }
 
+    case TokenType::Prompt: {
+      Consume();
+      auto expr = MakeUnique<PromptExpr>(loc);
+      CHECK_RESULT(ParseLabelOpt(&expr->block.label));
+      CHECK_RESULT(ParseBlock(&expr->block));
+      EXPECT(End);
+      CHECK_RESULT(ParseEndLabelOpt(expr->block.label));
+      *out_expr = std::move(expr);
+      break;
+    }
+
     default:
       assert(
           !"ParseBlockInstr should only be called when IsBlockInstr() is true");
@@ -2277,6 +2294,16 @@ Result WastParser::ParseExpr(ExprList* exprs) {
         EXPECT(Catch);
         CHECK_RESULT(ParseTerminatingInstrList(&expr->catch_));
         EXPECT(Rpar);
+        exprs->push_back(std::move(expr));
+        break;
+      }
+
+      case TokenType::Prompt: {
+        Consume();
+        Consume();
+        auto expr = MakeUnique<PromptExpr>(loc);
+        CHECK_RESULT(ParseLabelOpt(&expr->block.label));
+        CHECK_RESULT(ParseBlock(&expr->block));
         exprs->push_back(std::move(expr));
         break;
       }

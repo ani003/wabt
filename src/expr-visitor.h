@@ -42,6 +42,7 @@ class ExprVisitor {
     Loop,
     Try,
     Catch,
+    Prompt,
   };
 
   Result HandleDefaultState(Expr*);
@@ -111,7 +112,8 @@ class ExprVisitor::Delegate {
   virtual Result OnControlExpr(ControlExpr*) = 0;
   virtual Result OnRestoreExpr(RestoreExpr*) = 0;
   virtual Result OnContinuationCopyExpr(ContinuationCopyExpr*) = 0;
-  virtual Result OnPromptExpr(PromptExpr*) = 0;
+  virtual Result BeginPromptExpr(PromptExpr*) = 0;
+  virtual Result EndPromptExpr(PromptExpr*) = 0;
   virtual Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) = 0;
   virtual Result OnStoreExpr(StoreExpr*) = 0;
   virtual Result OnUnaryExpr(UnaryExpr*) = 0;
@@ -184,7 +186,8 @@ class ExprVisitor::DelegateNop : public ExprVisitor::Delegate {
   Result OnControlExpr(ControlExpr*) override { return Result::Ok; }
   Result OnRestoreExpr(RestoreExpr*) override { return Result::Ok; }
   Result OnContinuationCopyExpr(ContinuationCopyExpr*) override { return Result::Ok; }
-  Result OnPromptExpr(PromptExpr*) override { return Result::Ok; }
+  Result BeginPromptExpr(PromptExpr*) override { return Result::Ok; }
+  Result EndPromptExpr(PromptExpr*) override { return Result::Ok; }
   Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) override { return Result::Ok; }
   Result OnStoreExpr(StoreExpr*) override { return Result::Ok; }
   Result OnUnaryExpr(UnaryExpr*) override { return Result::Ok; }

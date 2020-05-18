@@ -647,11 +647,16 @@ Result BinaryReader::ReadFunctionBody(Offset end_offset) {
         CALLBACK0(OnContinuationCopyExpr);
         CALLBACK0(OnOpcodeBare);
         break;
-
-      case Opcode::Prompt:
-        CALLBACK0(OnPromptExpr);
-        CALLBACK0(OnOpcodeBare);
+      
+      case Opcode::Prompt: {
+        Type sig_type;
+        CHECK_RESULT(ReadType(&sig_type, "prompt signature type"));
+        ERROR_UNLESS(IsBlockType(sig_type),
+                     "expected valid prompt signature type");
+        CALLBACK(OnPromptExpr, sig_type);
+        CALLBACK(OnOpcodeBlockSig, sig_type);
         break;
+      }
 
       case Opcode::ContinuationDelete:
         CALLBACK0(OnContinuationDeleteExpr);

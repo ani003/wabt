@@ -279,7 +279,7 @@ typedef ExprMixin<ExprType::Select> SelectExpr;
 // typedef ExprMixin<ExprType::Control> ControlExpr;
 typedef ExprMixin<ExprType::Restore> RestoreExpr;
 typedef ExprMixin<ExprType::ContinuationCopy> ContinuationCopyExpr;
-typedef ExprMixin<ExprType::Prompt> PromptExpr;
+// typedef ExprMixin<ExprType::Prompt> PromptExpr;
 typedef ExprMixin<ExprType::ContinuationDelete> ContinuationDeleteExpr;
 typedef ExprMixin<ExprType::Unreachable> UnreachableExpr;
 typedef ExprMixin<ExprType::RefNull> RefNullExpr;
@@ -377,6 +377,7 @@ class BlockExprBase : public ExprMixin<TypeEnum> {
 
 typedef BlockExprBase<ExprType::Block> BlockExpr;
 typedef BlockExprBase<ExprType::Loop> LoopExpr;
+typedef BlockExprBase<ExprType::Prompt> PromptExpr;
 
 class IfExpr : public ExprMixin<ExprType::If> {
  public:

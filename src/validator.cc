@@ -90,7 +90,8 @@ class Validator : public ExprVisitor::Delegate {
   Result OnControlExpr(ControlExpr*) override;
   Result OnRestoreExpr(RestoreExpr*) override;
   Result OnContinuationCopyExpr(ContinuationCopyExpr*) override;
-  Result OnPromptExpr(PromptExpr*) override;
+  Result BeginPromptExpr(PromptExpr*) override;
+  Result EndPromptExpr(PromptExpr*) override;
   Result OnContinuationDeleteExpr(ContinuationDeleteExpr*) override;
   Result OnStoreExpr(StoreExpr*) override;
   Result OnUnaryExpr(UnaryExpr*) override;
@@ -238,6 +239,7 @@ Validator::Validator(Errors* errors,
     : options_(options), errors_(errors), script_(script) {
   typechecker_.set_error_callback(
       [this](const char* msg) { OnTypecheckerError(msg); });
+  typechecker_.PushLabelStack();
 }
 
 void Validator::PrintError(const Location* loc, const char* format, ...) {
@@ -902,9 +904,17 @@ Result Validator::OnContinuationCopyExpr(ContinuationCopyExpr* expr) {
   return Result::Ok;
 }
 
-Result Validator::OnPromptExpr(PromptExpr* expr) {
+Result Validator::BeginPromptExpr(PromptExpr* expr) {
   expr_loc_ = &expr->loc;
-  typechecker_.OnPrompt();
+  CheckBlockDeclaration(&expr->loc, Opcode::Prompt, &expr->block.decl);
+  typechecker_.OnPrompt(expr->block.decl.sig.param_types,
+                      expr->block.decl.sig.result_types);
+  return Result::Ok;
+}
+
+Result Validator::EndPromptExpr(PromptExpr* expr) {
+  expr_loc_ = &expr->block.end_loc;
+  typechecker_.OnPromptEnd(expr->block.decl.sig.result_types);
   return Result::Ok;
 }
 
@@ -1610,6 +1620,12 @@ class Validator::CheckFuncSignatureExprVisitorDelegate
 
   Result BeginLoopExpr(LoopExpr* expr) override {
     validator_->CheckBlockDeclaration(&expr->loc, Opcode::Loop,
+                                      &expr->block.decl);
+    return Result::Ok;
+  }
+
+  Result BeginPromptExpr(PromptExpr* expr) override {
+    validator_->CheckBlockDeclaration(&expr->loc, Opcode::Prompt,
                                       &expr->block.decl);
     return Result::Ok;
   }

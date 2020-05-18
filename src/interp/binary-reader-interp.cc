@@ -204,7 +204,7 @@ class BinaryReaderInterp : public BinaryReaderNop {
   wabt::Result OnControlExpr(Index func_index) override;
   wabt::Result OnRestoreExpr() override;
   wabt::Result OnContinuationCopyExpr() override;
-  wabt::Result OnPromptExpr() override;
+  wabt::Result OnPromptExpr(Type sig_type) override;
   wabt::Result OnContinuationDeleteExpr() override;
   wabt::Result OnStoreExpr(wabt::Opcode opcode,
                            uint32_t alignment_log2,
@@ -1802,9 +1802,11 @@ wabt::Result BinaryReaderInterp::OnContinuationCopyExpr() {
   return wabt::Result::Ok;
 }
 
-wabt::Result BinaryReaderInterp::OnPromptExpr() {
-  CHECK_RESULT(typechecker_.OnPrompt());
-  CHECK_RESULT(EmitOpcode(Opcode::Prompt));
+wabt::Result BinaryReaderInterp::OnPromptExpr(Type sig_type) {
+  TypeVector param_types, result_types;
+  GetBlockSignature(sig_type, &param_types, &result_types);
+  CHECK_RESULT(typechecker_.OnPrompt(param_types, result_types));
+  PushLabel(kInvalidIstreamOffset, kInvalidIstreamOffset);
   return wabt::Result::Ok;
 }
 

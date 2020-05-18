@@ -269,7 +269,7 @@ class BinaryReaderNop : public BinaryReaderDelegate {
   Result OnControlExpr(Index func_index) override { return Result::Ok; }
   Result OnRestoreExpr() override { return Result::Ok; }
   Result OnContinuationCopyExpr() override { return Result::Ok; }
-  Result OnPromptExpr() override { return Result::Ok; }
+  Result OnPromptExpr(Type sig_type) override { return Result::Ok; }
   Result OnContinuationDeleteExpr() override { return Result::Ok; }
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,

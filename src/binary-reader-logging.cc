@@ -273,6 +273,13 @@ Result BinaryReaderLogging::OnBlockExpr(Type sig_type) {
   return reader_->OnBlockExpr(sig_type);
 }
 
+Result BinaryReaderLogging::OnPromptExpr(Type sig_type) {
+  LOGF("OnPromptExpr(sig: ");
+  LogType(sig_type);
+  LOGF_NOINDENT(")\n");
+  return reader_->OnPromptExpr(sig_type);
+}
+
 Result BinaryReaderLogging::OnBrExpr(Index depth) {
   LOGF("OnBrExpr(depth: %" PRIindex ")\n", depth);
   return reader_->OnBrExpr(depth);
@@ -743,7 +750,6 @@ DEFINE0(OnSelectExpr)
 DEFINE_INDEX_DESC(OnControlExpr, "func_index")
 DEFINE0(OnRestoreExpr)
 DEFINE0(OnContinuationCopyExpr)
-DEFINE0(OnPromptExpr)
 DEFINE0(OnContinuationDeleteExpr)
 DEFINE_LOAD_STORE_OPCODE(OnLoadSplatExpr);
 DEFINE_LOAD_STORE_OPCODE(OnStoreExpr);

@@ -188,7 +188,7 @@ class BinaryReaderIR : public BinaryReaderNop {
   Result OnControlExpr(Index func_index) override;
   Result OnRestoreExpr() override;
   Result OnContinuationCopyExpr() override;
-  Result OnPromptExpr() override;
+  Result OnPromptExpr(Type sig_type) override;
   Result OnContinuationDeleteExpr() override;
   Result OnStoreExpr(Opcode opcode,
                      uint32_t alignment_log2,
@@ -770,6 +770,9 @@ Result BinaryReaderIR::OnEndExpr() {
     case LabelType::Try:
       cast<TryExpr>(expr)->block.end_loc = GetLocation();
       break;
+    case LabelType::Prompt:
+      cast<PromptExpr>(expr)->block.end_loc = GetLocation();
+      break;
 
     case LabelType::Func:
     case LabelType::Catch:
@@ -928,8 +931,13 @@ Result BinaryReaderIR::OnContinuationCopyExpr() {
   return AppendExpr(MakeUnique<ContinuationCopyExpr>());
 }
 
-Result BinaryReaderIR::OnPromptExpr() {
-  return AppendExpr(MakeUnique<PromptExpr>());
+Result BinaryReaderIR::OnPromptExpr(Type sig_type) {
+  auto expr = MakeUnique<PromptExpr>();
+  SetBlockDeclaration(&expr->block.decl, sig_type);
+  ExprList* expr_list = &expr->block.exprs;
+  CHECK_RESULT(AppendExpr(std::move(expr)));
+  PushLabel(LabelType::Prompt, expr_list);
+  return Result::Ok;
 }
 
 Result BinaryReaderIR::OnContinuationDeleteExpr() {

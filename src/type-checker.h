@@ -114,7 +114,7 @@ class TypeChecker {
   Result OnControl(const TypeVector& param_types, const TypeVector& result_types);
   Result OnRestore();
   Result OnContinuationCopy();
-  Result OnPrompt();
+  Result OnPrompt(const TypeVector& param_types, const TypeVector& result_types);
   Result OnContinuationDelete();
   Result OnSimdLaneOp(Opcode, uint64_t);
   Result OnSimdShuffleOp(Opcode, v128);
@@ -126,6 +126,9 @@ class TypeChecker {
   Result OnUnreachable();
   Result EndFunction();
 
+  void PushLabelStack();
+  Result OnPromptEnd(TypeVector result_types);
+  
  private:
   void WABT_PRINTF_FORMAT(2, 3) PrintError(const char* fmt, ...);
   Result TopLabel(Label** out_label);
@@ -135,6 +138,7 @@ class TypeChecker {
                  const TypeVector& param_types,
                  const TypeVector& result_types);
   Result PopLabel();
+  Result PopLabelStack();
   Result CheckLabelType(Label* label, LabelType label_type);
   Result GetThisFunctionLabel(Label **label);
   Result PeekType(Index depth, Type* out_type);
@@ -175,7 +179,7 @@ class TypeChecker {
 
   ErrorCallback error_callback_;
   TypeVector type_stack_;
-  std::vector<Label> label_stack_;
+  std::vector<std::pair<std::vector<Label>, size_t>> label_stack_;
   // Cache the expected br_table signature. It will be initialized to `nullptr`
   // to represent "any".
   TypeVector* br_table_sig_ = nullptr;

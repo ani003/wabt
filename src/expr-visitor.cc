@@ -89,6 +89,18 @@ Result ExprVisitor::VisitExpr(Expr* root_expr) {
         break;
       }
 
+      case State::Prompt: {
+        auto prompt_expr = cast<PromptExpr>(expr);
+        auto& iter = expr_iter_stack_.back();
+        if (iter != prompt_expr->block.exprs.end()) {
+          PushDefault(&*iter++);
+        } else {
+          CHECK_RESULT(delegate_->EndPromptExpr(prompt_expr));
+          PopExprlist();
+        }
+        break;
+      }
+
       case State::Try: {
         auto try_expr = cast<TryExpr>(expr);
         auto& iter = expr_iter_stack_.back();
@@ -351,9 +363,12 @@ Result ExprVisitor::HandleDefaultState(Expr* expr) {
       CHECK_RESULT(delegate_->OnContinuationCopyExpr(cast<ContinuationCopyExpr>(expr)));
       break;
 
-    case ExprType::Prompt:
-      CHECK_RESULT(delegate_->OnPromptExpr(cast<PromptExpr>(expr)));
+    case ExprType::Prompt: {
+      auto prompt_expr = cast<PromptExpr>(expr);
+      CHECK_RESULT(delegate_->BeginPromptExpr(prompt_expr));
+      PushExprlist(State::Prompt, expr, prompt_expr->block.exprs);
       break;
+    }
 
     case ExprType::ContinuationDelete:
       CHECK_RESULT(delegate_->OnContinuationDeleteExpr(cast<ContinuationDeleteExpr>(expr)));

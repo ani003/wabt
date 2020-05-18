@@ -62,14 +62,15 @@ void TypeChecker::PrintError(const char* fmt, ...) {
 }
 
 Result TypeChecker::GetLabel(Index depth, Label** out_label) {
-  if (depth >= label_stack_.size()) {
-    assert(label_stack_.size() > 0);
+  std::vector<Label> &top_label_stack = label_stack_.back().first;
+  if (depth >= top_label_stack.size()) {
+    assert(top_label_stack.size() > 0);
     PrintError("invalid depth: %" PRIindex " (max %" PRIzd ")", depth,
-               label_stack_.size() - 1);
+               top_label_stack.size() - 1);
     *out_label = nullptr;
     return Result::Error;
   }
-  *out_label = &label_stack_[label_stack_.size() - depth - 1];
+  *out_label = &top_label_stack[top_label_stack.size() - depth - 1];
   return Result::Ok;
 }
 
@@ -97,15 +98,23 @@ Result TypeChecker::SetUnreachable() {
   return Result::Ok;
 }
 
+void TypeChecker::PushLabelStack() {
+  label_stack_.emplace_back(std::vector<Label>(), type_stack_.size());
+}
+
+Result TypeChecker::PopLabelStack() {
+  label_stack_.pop_back();
+  return Result::Ok;
+}
+
 void TypeChecker::PushLabel(LabelType label_type,
                             const TypeVector& param_types,
                             const TypeVector& result_types) {
-  label_stack_.emplace_back(label_type, param_types, result_types,
-                            type_stack_.size());
+  label_stack_.back().first.emplace_back(label_type, param_types, result_types, type_stack_.size());
 }
 
 Result TypeChecker::PopLabel() {
-  label_stack_.pop_back();
+  label_stack_.back().first.pop_back();
   return Result::Ok;
 }
 
@@ -114,7 +123,7 @@ Result TypeChecker::CheckLabelType(Label* label, LabelType label_type) {
 }
 
 Result TypeChecker::GetThisFunctionLabel(Label** label) {
-  return GetLabel(label_stack_.size() - 1, label);
+  return GetLabel(label_stack_.back().first.size() - 1, label);
 }
 
 Result TypeChecker::PeekType(Index depth, Type* out_type) {
@@ -327,7 +336,7 @@ void TypeChecker::PrintStackIfFailed(Result result,
 
 Result TypeChecker::BeginFunction(const TypeVector& sig) {
   type_stack_.clear();
-  label_stack_.clear();
+  label_stack_.back().first.clear();
   PushLabel(LabelType::Func, TypeVector(), sig);
   return Result::Ok;
 }
@@ -517,6 +526,20 @@ Result TypeChecker::OnElse() {
   return result;
 }
 
+Result TypeChecker::OnPromptEnd(TypeVector result_types) {
+  size_t type_stack_limit = label_stack_.back().second;
+  
+  Result result = Result::Ok;
+  result |= PopAndCheckSignature(result_types, "prompt result types (1)");
+  result |= (type_stack_.size() == type_stack_limit) ? Result::Ok : Result::Error;
+  PrintStackIfFailed(result, "prompt result types (2)");
+
+  type_stack_.resize(type_stack_limit);
+  PushTypes(result_types);
+  PopLabelStack();
+  return result;
+}
+
 Result TypeChecker::OnEnd(Label* label,
                           const char* sig_desc,
                           const char* end_desc) {
@@ -532,7 +555,7 @@ Result TypeChecker::OnEnd(Label* label,
 Result TypeChecker::OnEnd() {
   Result result = Result::Ok;
   static const char* s_label_type_name[] = {
-      "function", "block", "loop", "if", "if false branch", "try", "try catch"};
+      "function", "block", "loop", "if", "if false branch", "try", "try catch", "prompt"};
   WABT_STATIC_ASSERT(WABT_ARRAY_SIZE(s_label_type_name) == kLabelTypeCount);
   Label* label;
   CHECK_RESULT(TopLabel(&label));
@@ -735,8 +758,13 @@ Result TypeChecker::OnContinuationCopy() {
   return result;
 }
 
-Result TypeChecker::OnPrompt() {
-  return Result::Ok;
+Result TypeChecker::OnPrompt(const TypeVector& param_types,
+                            const TypeVector& result_types) {
+  Result result = PopAndCheckSignature(param_types, "prompt");
+  // PushLabel(LabelType::Prompt, param_types, result_types);
+  PushLabelStack();
+  PushTypes(param_types);
+  return result;
 }
 
 Result TypeChecker::OnContinuationDelete() {

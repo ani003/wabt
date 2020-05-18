@@ -678,6 +678,9 @@ void BinaryWriter::WriteExpr(const Func* func, const Expr* expr) {
       break;
     case ExprType::Prompt:
       WriteOpcode(stream_, Opcode::Prompt);
+      WriteBlockDecl(cast<PromptExpr>(expr)->block.decl);
+      WriteExprList(func, cast<PromptExpr>(expr)->block.exprs);
+      WriteOpcode(stream_, Opcode::End);
       break;
     case ExprType::ContinuationDelete:
       WriteOpcode(stream_, Opcode::ContinuationDelete);
