@@ -127,6 +127,7 @@ class TypeChecker {
   Result EndFunction();
 
   void PushLabelStack();
+  bool IsInsidePrompt();
   Result OnPromptEnd(TypeVector result_types);
   
  private:

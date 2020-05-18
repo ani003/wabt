@@ -102,6 +102,10 @@ void TypeChecker::PushLabelStack() {
   label_stack_.emplace_back(std::vector<Label>(), type_stack_.size());
 }
 
+bool TypeChecker::IsInsidePrompt() {
+  return label_stack_.size() >= 2;
+}
+
 Result TypeChecker::PopLabelStack() {
   label_stack_.pop_back();
   return Result::Ok;
@@ -701,6 +705,13 @@ Result TypeChecker::OnThrow(const TypeVector& sig) {
 }
 
 Result TypeChecker::OnReturn() {
+
+  if(IsInsidePrompt()) {
+    // printf("%d\n", label_stack_.size());
+    PrintError("invalid: return not allowed inside prompt");
+    return Result::Error;
+  }
+
   Result result = Result::Ok;
   Label* func_label;
   CHECK_RESULT(GetThisFunctionLabel(&func_label));
@@ -761,8 +772,8 @@ Result TypeChecker::OnContinuationCopy() {
 Result TypeChecker::OnPrompt(const TypeVector& param_types,
                             const TypeVector& result_types) {
   Result result = PopAndCheckSignature(param_types, "prompt");
-  // PushLabel(LabelType::Prompt, param_types, result_types);
   PushLabelStack();
+  PushLabel(LabelType::Prompt, param_types, result_types);
   PushTypes(param_types);
   return result;
 }
